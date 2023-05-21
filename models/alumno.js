@@ -2,7 +2,6 @@
 module.exports = (sequelize, DataTypes) => {
   const alumno = sequelize.define('alumno', {
     nombre: DataTypes.STRING,
-    id_alumno: DataTypes.INTEGER
   }, {});
     // associations can be defined here
     //codigo de asociacion  (tiene muchos:)
@@ -14,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
   ///////////////////////
+
 
   return alumno;
 };
