@@ -4,9 +4,10 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
-  models.carrera
-    .findAll({
-      attributes: ["id", "nombre"]
+  models.carrera.findAll({attributes: ["id", "nombre","id_facultad"],
+    /////////se agrega la asociacion 
+    include:[{as:'Facultad-Relacionada', model:models.facultad, attributes: ["id","nombre"]}]
+    ////////////////////////////////
     })
     .then(carreras => res.send(carreras))
     .catch(() => res.sendStatus(500));
@@ -14,7 +15,7 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   models.carrera
-    .create({ nombre: req.body.nombre })
+    .create({ nombre: req.body.nombre , id_facultad: req.body.id_facultad })
     .then(carrera => res.status(201).send({ id: carrera.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -30,7 +31,7 @@ router.post("/", (req, res) => {
 const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
   models.carrera
     .findOne({
-      attributes: ["id", "nombre"],
+      attributes: ["id", "nombre","id_facultad"],
       where: { id }
     })
     .then(carrera => (carrera ? onSuccess(carrera) : onNotFound()))
@@ -48,7 +49,7 @@ router.get("/:id", (req, res) => {
 router.put("/:id", (req, res) => {
   const onSuccess = carrera =>
     carrera
-      .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+      .update({ nombre: req.body.nombre },{ fields: ["nombre"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {

@@ -7,7 +7,9 @@ router.get("/", (req, res,next) => {
   models.materia.findAll({attributes: ["id","nombre","id_carrera"],
       
       /////////se agrega la asociacion 
-      include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}]
+      include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
+      ////////////////////////////////
+      include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}]
       ////////////////////////////////
 
     }).then(materias => res.send(materias)).catch(error => { return next(error)});
@@ -33,7 +35,7 @@ router.post("/", (req, res) => {
 const findmateria = (id, { onSuccess, onNotFound, onError }) => {
   models.materia
     .findOne({
-      attributes: ["id", "nombre"],
+      attributes: ["id", "nombre","id_carrera"],
       where: { id }
     })
     .then(materia => (materia ? onSuccess(materia) : onNotFound()))
@@ -51,7 +53,7 @@ router.get("/:id", (req, res) => {
 router.put("/:id", (req, res) => {
   const onSuccess = materia =>
     materia
-      .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+      .update({ nombre: req.body.nombre, id_carrera: req.body.id_carrera}, { fields: ["nombre","id_carrera"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
