@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
   }
 
   let size = 2;
-  if(!Number.isNaN(sizeNum) && sizeNum > 0  && sizeNum < 2){
+  if(!Number.isNaN(sizeNum) && sizeNum > 0  && sizeNum < 4){
     size = sizeNum;   //valida que sea mayor a cero y menor a sizeNum
   }
     
@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
     attributes: ["id", "nombre","id_facultad"],
     include:[{as:'Facultad-Relacionada', model:models.facultad, attributes: ["id","nombre"]}],
     limit: size,
-    offset: page * size
+    offset: (page - 1) * size
   })
     
     .then(carreras => res.send({

@@ -2,17 +2,48 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
-router.get("/", (req, res,next) => {
+// router.get("/", (req, res,next) => {
 
-  models.materia.findAll({attributes: ["id","nombre","id_carrera"],
+//   models.materia.findAll({attributes: ["id","nombre","id_carrera"],
       
-      /////////se agrega la asociacion 
-      include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
+//       /////////se agrega la asociacion 
+//       include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
       
-      include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}]
-      ////////////////////////////////
+//       include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}]
+//       ////////////////////////////////
 
-    }).then(materias => res.send(materias)).catch(error => { return next(error)});
+//     }).then(materias => res.send(materias)).catch(error => { return next(error)});
+// });
+
+router.get("/", (req, res) => {
+  
+  const pageNum = Number.parseInt(req.query.page);    //verifica que sean numeros evitando el ingreso de texto
+  const sizeNum = Number.parseInt(req.query.size);  //verifica que sean numeros evitando el ingreso de texto
+
+  let page = 0;
+  if(!Number.isNaN(pageNum) && pageNum > 0){  //valida que sea mayor a cero
+    page = pageNum;
+  }
+
+  let size = 2;
+  if(!Number.isNaN(sizeNum) && sizeNum > 0  && sizeNum < 11){
+    size = sizeNum;   //valida que sea mayor a cero y menor a sizeNum
+  }
+    
+  models.materia.findAndCountAll({
+    attributes: ["id","nombre","id_carrera"],
+    include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
+    include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}],
+    limit: size,
+    offset: (page - 1) * size
+  })
+    
+    .then(materias => res.send({
+        materias: materias.rows,
+        totalPages: Math.ceil(materias.count / size)-1   //redondeo al sig numero entero
+    }))
+    
+    .catch(() => res.sendStatus(500));
 });
 
 
