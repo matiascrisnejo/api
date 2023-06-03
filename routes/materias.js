@@ -8,7 +8,7 @@ router.get("/", (req, res,next) => {
       
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
-      ////////////////////////////////
+      
       include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}]
       ////////////////////////////////
 
