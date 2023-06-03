@@ -22,12 +22,12 @@ router.get("/", (req, res) => {
     attributes: ["id", "nombre","id_facultad"],
     include:[{as:'Facultad-Relacionada', model:models.facultad, attributes: ["id","nombre"]}],
     limit: size,
-    offset: (page - 1) * size
+    offset: page * size
   })
     
     .then(carreras => res.send({
         carreras: carreras.rows,
-        totalPages: Math.ceil(carreras.count / size)    //redondeo al sig numero entero
+        totalPages: Math.ceil(carreras.count / size) - 1   //redondeo al sig numero entero
     }))
     
     .catch(() => res.sendStatus(500));

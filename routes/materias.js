@@ -35,12 +35,12 @@ router.get("/", (req, res) => {
     include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}],
     include:[{as:'profesor', model:models.profesor, attributes: ["id","nombre","apellido","email"]}],
     limit: size,
-    offset: (page - 1) * size
+    offset: page * size
   })
     
     .then(materias => res.send({
         materias: materias.rows,
-        totalPages: Math.ceil(materias.count / size)-1   //redondeo al sig numero entero
+        totalPages: Math.ceil(materias.count / size) - 1   //redondeo al sig numero entero
     }))
     
     .catch(() => res.sendStatus(500));
